@@ -4,8 +4,10 @@ const router  = express.Router();
 
 router.get('/pokemon', async (req, res) => {
   try {
+    const limit  = req.query.limit  || 151;  // Primera generación completa
+    const offset = req.query.offset || 0;
     const { data } = await axios.get(
-      `${process.env.POKE_API_URL}/pokemon?limit=20&offset=0`
+      `${process.env.POKE_API_URL}/pokemon?limit=${limit}&offset=${offset}`
     );
     res.json(data.results);
   } catch {
@@ -19,15 +21,15 @@ router.get('/pokemon/:name', async (req, res) => {
       `${process.env.POKE_API_URL}/pokemon/${req.params.name}`
     );
     res.json({
-      id:          data.id,
-      name:        data.name,
-      types:       data.types.map(t => t.type.name),
-      stats:       data.stats.map(s => ({ name: s.stat.name, value: s.base_stat })),
-      sprite:      data.sprites.other['official-artwork'].front_default || data.sprites.front_default,
-      height:      data.height,
-      weight:      data.weight,
-      abilities:   data.abilities.map(a => a.ability.name),
-      speciesUrl:  data.species.url,
+      id:         data.id,
+      name:       data.name,
+      types:      data.types.map(t => t.type.name),
+      stats:      data.stats.map(s => ({ name: s.stat.name, value: s.base_stat })),
+      sprite:     data.sprites.other['official-artwork'].front_default || data.sprites.front_default,
+      height:     data.height,
+      weight:     data.weight,
+      abilities:  data.abilities.map(a => a.ability.name),
+      speciesUrl: data.species.url,
     });
   } catch {
     res.status(404).json({ error: 'Pokémon no encontrado' });
